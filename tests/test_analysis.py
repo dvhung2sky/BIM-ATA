@@ -65,3 +65,22 @@ def test_diagnostics_flag_broken_model():
     msgs = " ".join(diag["error"])
     assert "No boundary conditions" in msgs and "Joint 999 is disconnected" in msgs
     assert "Suggestion" in fa.format_diagnostics(diag)
+
+
+BENCH = os.path.join(ROOT, "examples", "benchmarks")
+
+
+def test_benchmarks_reproduce_stored_results(tmp_path):
+    """Each benchmark model reproduces its stored linear result; Example 1 also matches Fig. 8 of the paper."""
+    names = sorted(n for n in os.listdir(BENCH) if os.path.isdir(os.path.join(BENCH, n)))
+    assert len(names) == 5
+    for name in names:
+        folder = os.path.join(BENCH, name)
+        out = tmp_path / f"{name}.txt"
+        d, s = fa.run_truss_analysis(os.path.join(folder, "truss.txt"), str(out), False, False)
+        assert d and s, name
+        ref = _summary(os.path.join(folder, "result.txt"))
+        got = _summary(out)
+        assert abs(got[0] - ref[0]) < 1e-6 and abs(got[1] - ref[1]) < 1e-6, name
+    dome = _summary(os.path.join(BENCH, "ex1_dome_120", "result.txt"))
+    assert abs(dome[0] - 168.119167) < 1e-6 and abs(dome[1] - 1014.897) < 1e-3

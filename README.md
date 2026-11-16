@@ -35,7 +35,8 @@ sap2000_truss.py  independent check of the same model through the SAP2000 OAPI
 | `CHS_eurocode.csv` | Properties of circular hollow sections (EN 10210), used by the analysis agent |
 | `CHS_section.csv` | Section catalogue offered to the optimizer |
 | `examples/demo_12_joint/` | 12-joint, 31-member truss: model (`truss.txt`), OpenSees results, SAP2000 results, optimized model and its results |
-| `examples/autocad/AutoCad_OpenSees_3D_truss.dwg` | AutoCAD drawing used in the study (joint, load and support blocks; sections on `CHS_...` layers) |
+| `examples/benchmarks/` | The five benchmark trusses of the paper (dome 120, pyramid 25, lattice 42, grids 72 and 144 members) with analysis and optimization outputs; see its README for reproduced vs reported values |
+| `examples/autocad/AutoCad_OpenSees_3D_truss.dwg` | AutoCAD drawing from which the benchmarks were extracted (joint, load and support blocks; sections on layers) |
 | `create_chs_layers.py` | Creates one AutoCAD layer per CHS section, to prepare a new drawing |
 | `run_example.py` | Headless analysis + optimization, no AutoCAD or LLM required |
 | `tests/` | Regression tests (reference results, SAP2000 agreement, nonlinear convergence, diagnostics) |
@@ -58,8 +59,18 @@ python run_example.py examples/demo_12_joint/truss.txt --optimize ALL   # PSO, G
 python -m pytest tests
 ```
 
-`tests/test_analysis.py` checks that the linear run reproduces `examples/demo_12_joint/result.txt` and that nodal
-displacements agree with the SAP2000 OAPI results (`sap2000_results.txt`) to 0.001 mm.
+`tests/test_analysis.py` checks that the linear run reproduces `examples/demo_12_joint/result.txt`, that nodal
+displacements agree with the SAP2000 OAPI results (`sap2000_results.txt`) to 0.001 mm, and that all five benchmarks
+reproduce their stored results (Example 1 also matches Fig. 8 of the paper: 168.119 mm, 1014.897 MPa).
+
+To reproduce the optimization results of the paper (Figs. 10-11), run for each benchmark:
+
+```bash
+python run_example.py examples/benchmarks/ex4_grid_72/truss.txt --optimize PSO    # 558.957 kg -> 722.201 kg
+```
+
+The optimized masses of Examples 2-5 (408.838, 1240.318, 722.201 and 1998.338 kg) are reproduced exactly with the
+default settings (population 50, 100 generations, seed 42).
 
 ## Full agentic workflow
 

@@ -187,11 +187,12 @@ def run_analysis_in_memory(truss_data, section_areas, is_geom_nonlin=True, is_ma
     for joint_id, (x, y, z) in sorted(joints.items()):
         ops.node(joint_id, x * 1000, y * 1000, z * 1000)   # m → mm (E in MPa, A in mm²)
 
+    # Several support blocks may sit on one joint: merge their constraints (OpenSees allows one fix per node).
+    fixed = {}
     for bc_id, joint_id, bc_type, constraints in bc_data:
-        fix_x = 1 if 1 in constraints else 0
-        fix_y = 1 if 2 in constraints else 0
-        fix_z = 1 if 3 in constraints else 0
-        ops.fix(joint_id, fix_x, fix_y, fix_z)
+        fixed.setdefault(joint_id, set()).update(constraints)
+    for joint_id, constraints in fixed.items():
+        ops.fix(joint_id, *(1 if dof in constraints else 0 for dof in (1, 2, 3)))
 
     E = 210000.0   # MPa — Eurocode steel (matches SAP2000's 2.1e8 kN/m²)
     Fy = 355.0
