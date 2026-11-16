@@ -1,0 +1,20 @@
+# core (analysis, optimization, tests, run_example.py)
+openseespy>=3.5
+numpy
+pymoo>=0.6
+plotly
+matplotlib
+pytest
+# agent + GUI
+langchain-core
+langchain-deepseek
+customtkinter
+Pillow
+PyQt5
+PyQtWebEngine
+# Eurocode 3 retrieval
+faiss-cpu
+sentence-transformers
+# Windows COM bridges (AutoCAD, SAP2000)
+pywin32; sys_platform == "win32"
+comtypes; sys_platform == "win32"

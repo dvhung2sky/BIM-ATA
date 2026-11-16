@@ -1,0 +1,24 @@
+__pycache__/
+*.pyc
+.env
+# generated at run time
+/truss.txt
+/result.txt
+/truss_optimized.txt
+/result_optimized.txt
+/sap2000_results.txt
+/*.html
+/*.png
+# RAG corpus (copyrighted sources) and model weights
+rag_data/
+Qwen3-Embedding-0.6B/
+*.faiss
+*.index
+# CAD / SAP2000 side files
+*.bak
+*.dwl
+*.dwl2
+*.$2k
+*.sdb
+*.LOG
+*.OUT
